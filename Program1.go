@@ -1,5 +1,7 @@
 package main
+
 import "fmt"
+
 func main() {
-    fmt.Println("skibidi ohio")
+	fmt.Println("fanum tax")
 }
