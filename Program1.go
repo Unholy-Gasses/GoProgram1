@@ -6,6 +6,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
+// hello
 func main() {
 	// Corrected URL string
 	scrapeUrl := "https://xkcd.com/"
