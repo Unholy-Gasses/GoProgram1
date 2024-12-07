@@ -2,73 +2,46 @@ package main
 
 import (
 	"fmt"
-
+	"log"
 	"github.com/gocolly/colly"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 )
-
-// hello
-func main() {
-	// Corrected URL string
-	scrapeUrl := "https://xkcd.com/"
-
-	// Create a new Colly collector
-	c := colly.NewCollector(
-		colly.AllowedDomains("xkcd.com"), // Allowed domain
-	)
-
-	// Define what to do when a matching HTML element is found
-	c.OnHTML("div#comic", func(h *colly.HTMLElement) {
-		fmt.Printf("Comic Text:", h.Text)
-	})
-	//A function that runs everytime a request goes through
-	c.OnRequest((func(r *colly.Request) {
-		fmt.Printf(fmt.Sprintf("Visiting %s", r.URL))
-	}))
-	//Prints error if it occurs
-	c.OnError(func(r *colly.Response, e error) {
-		fmt.Printf("Error while scraping: %s\n", e.Error())
-	})
-	// Visit URL
-	c.Visit(scrapeUrl)
-}
-
-/*package main // Defines the main package, the entry point for the Go program.
-
-import (
-	"fmt"       // Provides functions for formatted I/O, like printing to the console.
-	"log"       // Provides logging functionality for error and info messages.
-	"net/http"  // Allows making HTTP requests (used to download images).
-	"os"        // Handles file and directory operations (e.g., creating directories).
-	"path/filepath" // Handles file path manipulations in a cross-platform way.
-	"strings"   // Provides string manipulation utilities.
-	"github.com/gocolly/colly" // The Colly library for web scraping.
-)
-
-// Directory where the comics will be saved.
 const saveDir = "./xkcd-comics"
 
 func main() {
-	// Create a new Colly collector to manage scraping tasks.
+	//collector
 	c := colly.NewCollector(
-		colly.AllowedDomains("xkcd.com"), // Restrict scraping to the XKCD domain.
-		colly.Async(true),                // Enable asynchronous scraping for better performance.
+		colly.AllowedDomains("xkcd.com") // domain access
+		colly.Async(true) //asyn for better performance
 	)
 
-	// Create the directory for saving comics if it doesn't already exist.
-	if err := os.MkdirAll(saveDir, os.ModePerm); err != nil {
-		log.Fatalf("Failed to create save directory: %v", err) // Exit if directory creation fails.
+	//creating directory for downloads, if one doesnt exist
+	if error := os.MkdirAll(saveDir, os.ModePerm); != nil {
+		log.Fatalf("Failed to create save directory: %v", error) //exits if creation fails
 	}
 
-	// Define what to do when an image is found inside the `div#comic` element.
-	c.OnHTML("div#comic img", func(e *colly.HTMLElement) {
-		imgURL := e.Attr("src") // Get the 'src' attribute of the <img> tag.
-		if !strings.HasPrefix(imgURL, "https:") {
-			imgURL = "https:" + imgURL // Ensure the URL is absolute by adding "https:".
+	//what to do when image is found
+	c.OnHTML("div#comic img", func(e *colly.HTMLElement){
+		imgURL := e.Attr("scr") // gets scr attribute of img tag
+		if !strings.HasPrefix(imgURL, "https:"){
+			imgUrl = "https:" + imgURL //makes sure url is absolute
 		}
-
-		// Download and save the comic image.
+		//download and save comic
 		saveComic(imgURL)
 	})
+
+	
+
+}
+
+
+
+
+/*
+
 
 	// Define what to do when the "Previous" button is found.
 	c.OnHTML("a[rel='prev']", func(e *colly.HTMLElement) {
